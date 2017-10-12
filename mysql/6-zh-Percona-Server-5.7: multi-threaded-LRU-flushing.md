@@ -20,7 +20,7 @@ The problem with this flushing mode is that it will iterate over the LRU list of
 这种刷新模式的问题是，它会遍历buffer pools实例的LRU列表，同时在Innodb中持有buffer pool互斥量（或者XtraDB中更细粒度的LRU列表互斥体）。从而，当server的清理线程跟不上LRU刷新的需求就会进一步增加互斥量之前相互争用的压力——这也可以说是清理线程自己的问题。最后，一旦单页刷新找到一个页可以进行刷新，它在获取空闲的doublewrite buffer槽（如前所述）也还是会遇到问题。这就告诉我们一个道理，单页刷新并不是一个好的解决方案。下面的火焰图说明了一切:  
 
 
-![FLame Graph](https://pan.baidu.com/s/1hrUJCxQ)
+![FLame Graph](https://www.percona.com/blog/wp-content/uploads/2016/03/512.io_.conc0_.svg)
 
 Note how a big part of the server run time is attributed to a flame rooted at JOIN::optimize, whose run time in turn is almost fully taken by buf_dblwr_write_single_page in two branches.  
 
