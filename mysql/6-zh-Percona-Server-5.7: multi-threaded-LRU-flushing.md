@@ -17,9 +17,10 @@ Let’s start with describing a single-page flush. If the working set of a datab
 
 The problem with this flushing mode is that it will iterate over the LRU list of a buffer pool instance, while holding the buffer pool mutex in InnoDB (or the finer-grained LRU list mutex in XtraDB). Thus, a server whose cleaner threads are not able to keep up with the LRU flushing demand will have further increased mutex pressure – which can further contribute to the cleaner thread troubles. Finally, once the single-page flusher finds a page to flush it might have trouble in getting a free doublewrite buffer slot (as shown previously). That suggested to us that single-page LRU flushes are never a good idea.  The flame graph below demonstrates this:   
 
-这种刷新模式的问题是，它会遍历buffer pools实例的LRU列表，同时在Innodb中持有buffer pool互斥量（或者XtraDB中更细粒度的LRU列表互斥体）。从而，当server的清理线程跟不上LRU刷新的需求就会进一步增加互斥量之前相互争用的压力——这也可以说是清理线程自己的问题。最后，一旦单页刷新找到一个页可以进行刷新，它在获取空闲的doublewrite buffer槽（如前所述）也还是会遇到问题。这就告诉我们一个道理，单页刷新并不是一个好的解决方案。下面的火焰图说明了一切：
+这种刷新模式的问题是，它会遍历buffer pools实例的LRU列表，同时在Innodb中持有buffer pool互斥量（或者XtraDB中更细粒度的LRU列表互斥体）。从而，当server的清理线程跟不上LRU刷新的需求就会进一步增加互斥量之前相互争用的压力——这也可以说是清理线程自己的问题。最后，一旦单页刷新找到一个页可以进行刷新，它在获取空闲的doublewrite buffer槽（如前所述）也还是会遇到问题。这就告诉我们一个道理，单页刷新并不是一个好的解决方案。下面的火焰图说明了一切:  
 
-![Flame Graph](https://www.percona.com/blog/wp-content/uploads/2016/03/512.io_.conc0_.svg)
+
+![FLame Graph](https://pan.baidu.com/s/1hrUJCxQ)
 
 Note how a big part of the server run time is attributed to a flame rooted at JOIN::optimize, whose run time in turn is almost fully taken by buf_dblwr_write_single_page in two branches.  
 
