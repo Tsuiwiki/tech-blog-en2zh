@@ -88,6 +88,7 @@ select event_name, current_alloc, high_alloc from sys.memory_global_by_current_b
 ```  
 
 3. Usually this will give you the place in code when memory is allocated. It is usually self-explanatory. In some cases we can search for bugs or we might need to check the MySQL source code.  
+---
 
 1. 首先,我们需要启用收集内存指标,运行如下语句:  
 
@@ -104,7 +105,7 @@ select event_name,current_alloc,high_alloc from sys.memory_global_by_current_byt
 3. 通常,这将在分配内存时为你提供代码,它通常是不言自明的.在某些情况下,我们可以搜索错误,或者我们可能需要检查MySQL源代码.  
 
 For example, for the bug where memory was over-allocated in triggers ([https://bugs.mysql.com/bug.php?id=86821](https://bugs.mysql.com/bug.php?id=86821)) the select shows:  
-例如,有一个过度为触发器分配内存的bug[https://bugs.mysql.com/bug.php?id=86821](https://bugs.mysql.com/bug.php?id=86821)  
+例如,有一个过度为触发器分配内存的bug([https://bugs.mysql.com/bug.php?id=86821](https://bugs.mysql.com/bug.php?id=86821))  
 
 ```
 mysql> select event_name, current_alloc, high_alloc from memory_global_by_current_bytes where current_count > 0;  
