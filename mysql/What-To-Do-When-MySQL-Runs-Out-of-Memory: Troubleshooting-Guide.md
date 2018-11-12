@@ -76,23 +76,31 @@ The good news is: starting with MySQL 5.7 we have memory allocation in performan
 好消息是,从5.7开始我们可以通过performance_schema查看内存的分配情况.下面就展示如何使用它.  
 
 1. First, we need to enable collecting memory metrics. Run:  
+
 ```
 UPDATE setup_instruments SET ENABLED = 'YES' WHERE NAME LIKE 'memory/%';  
 ```
+
 2. Run the report from sys schema:  
+
 ```
 select event_name, current_alloc, high_alloc from sys.memory_global_by_current_bytes where current_count > 0;  
 ```  
+
 3. Usually this will give you the place in code when memory is allocated. It is usually self-explanatory. In some cases we can search for bugs or we might need to check the MySQL source code.  
 
 1. 首先,我们需要启用收集内存指标,运行如下语句:  
+
 ```
 UPDATE setup_instruments SET ENABLED = 'YES' WHERE NAME LIKE 'memory/%';  
 ```
+
 2. 运行sys schema里面的报告  
+
 ```
 select event_name,current_alloc,high_alloc from sys.memory_global_by_current_bytes where current_count > 0;  
 ```
+
 3. 通常,这将在分配内存时为你提供代码,它通常是不言自明的.在某些情况下,我们可以搜索错误,或者我们可能需要检查MySQL源代码.  
 
 For example, for the bug where memory was over-allocated in triggers ([https://bugs.mysql.com/bug.php?id=86821](https://bugs.mysql.com/bug.php?id=86821)) the select shows:  
@@ -106,7 +114,10 @@ mysql> select event_name, current_alloc, high_alloc from memory_global_by_curren
 | memory/innodb/buf_buf_pool                                                     | 7.29 GiB      | 7.29 GiB    |
 | memory/sql/sp_head::main_mem_root                                              | 3.21 GiB      | 3.62 GiB    |
 ...
+```
+
 查询的显示如下:  
+
 ```
 mysql> select event_name, current_alloc, high_alloc from memory_global_by_current_bytes where current_count > 0;
 +--------------------------------------------------------------------------------+---------------+-------------+
@@ -116,6 +127,7 @@ mysql> select event_name, current_alloc, high_alloc from memory_global_by_curren
 | memory/sql/sp_head::main_mem_root                                              | 3.21 GiB      | 3.62 GiB    |
 ...
 ```
+
 The largest chunk of RAM is usually the buffer pool but ~3G in stored procedures seems to be too high.  
 分配最大一块内存通常是buffer pool，但是约3G的存储过程似乎有点太高了.  
 
@@ -124,6 +136,7 @@ According to the [MySQL source code documentation](https://dev.mysql.com/doc/dev
 
 In addition we can get a total report for each higher level event if we want to see from the birds eye what is eating memory:  
 另外，我们想要鸟瞰什么吃掉了内存，我们可以获得每个事件更高级别活动的总体报告.  
+
 ```
 mysql> select  substring_index(
     ->     substring_index(event_name, '/', 2),
@@ -144,5 +157,6 @@ mysql> select  substring_index(
 +--------------------+-------------------+
 4 rows in set (0.00 sec)
 ```
+
 I hope those simple steps can help troubleshoot MySQL crashes due to running out of memory.  
 我希望这些简单的步骤可以帮助解决由于内存溢出导致的MySQL崩溃问题。  
