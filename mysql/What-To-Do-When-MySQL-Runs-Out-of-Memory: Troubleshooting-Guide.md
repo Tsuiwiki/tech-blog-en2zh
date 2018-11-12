@@ -62,7 +62,7 @@ MySQL allocates memory in tons of places. Especially:
 * Temporary tables in RAM (find all in-memory tables by running: select * from information_schema.tables where engine='MEMORY' )  
 * Prepared statements, when it is not deallocated (check the number of prepared commands via deallocate command by running show global status like ‘ Com_prepare_sql';show global status like 'Com_dealloc_sql'  )  
 
-第二部分: 检查MySQL内部  
+**第二部分: 检查MySQL内部** 
 
 现在我们可以检查MySQL内部的东西来寻找潜在的MySQL内存泄漏情况:  
 MySQL在很多地方分配内存.尤其：  
