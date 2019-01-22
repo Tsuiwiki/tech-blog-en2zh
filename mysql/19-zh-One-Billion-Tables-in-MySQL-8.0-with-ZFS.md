@@ -6,7 +6,7 @@
 ------------------
 
 ## The short version
-## 以下是新闻摘要
+## 摘要
 I created > one billion InnoDB tables in MySQL 8.0 (tables, not rows) just for fun. Here is the proof:  
 我在 MySQL8.0上创建了10亿+张InnoDB表（注意是表而不是行），如下：  
 
@@ -34,7 +34,7 @@ mysql> select count(*) from information_schema.tables;
 ```
 
 Yes, it took 6 hours and 57 minutes to count them all!  
-是的，你没有看错，耗费了6小时57分钟去统计这个表数目！  
+是的，它耗费了6小时57分钟去统计表数目！  
 
 ## Why does anyone need one billion tables?  
 ## 谁会需要创建10亿+张表？  
