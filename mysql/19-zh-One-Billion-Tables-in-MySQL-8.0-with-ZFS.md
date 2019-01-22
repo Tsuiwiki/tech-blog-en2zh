@@ -44,7 +44,7 @@ In my previous blog post, I created and tested [MySQL 8.0 with 40 million tables
 在我之前的文章中，我创建和测试了[MySQL 8.0上创建4000w张表](https://www.percona.com/blog/2018/09/03/40-million-tables-in-mysql-8-0-with-zfs/)（这是一个真实的案例）。不过10亿张表不是真实的案例场景，是因为我想挑战下[在PG上创建了10亿张表](https://www.pgcon.org/2013/schedule/attachments/283_Billion_Tables_Project-PgCon2013.pdf)的测试，所以准备在MySQL下创建下10亿张InnoDB表。
 
 As an aside: I think MySQL 8.0 is the first MySQL version where creating 1 billion InnoDB tables is even practically possible.
-注：我认为MySQL8.0版本才是第一个具有创建10亿张InnoDB表可能性的MySQL版本。
+注：我认为MySQL8.0才是第一个具有创建10亿张InnoDB表可能性的MySQL版本。
 
 ## Challenges with one billion InnoDB tables
 ## 挑战10亿张InnoDB表
@@ -90,13 +90,13 @@ mysqldata/mysql/data             compression           gzip                     
 
 This is usually the big issue with databases that create a file per table. With MySQL 8.0 we can create a shared tablespace and “assign” a table to it. I created a tablespace per database, and created 1000 tables in each database.  
 
-每张表要创建一个文件，这是个问题。在MySQL 8.0中，我们可以创建一个共享表空间，并为其分配一个表。我为每个database创建一个表空间，每个database创建了1000张表。
+为每张表要创建一个表空间文件，这是大问题。不过在MySQL 8.0中，我们可以创建一个通用表空间（General Tablespace）并在创建表时将表”分配“到表空间上。这里我为每个database创建一个通用表空间，每个database上创建了1000张表。
 
 The result:  
 结果就是：  
 
 ```
-mysql> select count(*) from information_schema.schemata;
+mysql> select count(*) from information_schema.schema;
 +----------+
 | count(*) |
 +----------+
@@ -112,7 +112,7 @@ Another big challenge is how to create tables fast enough so it will not take mo
 2. Created tables in parallel: as the [mutex contention bug in MySQL 8.0](https://bugs.mysql.com/bug.php?id=87827) has been fixed, creating tables in parallel works fine.
 3. Use local NVMe cards on top of an AWS ec2 i3.8xlarge instance
 
-另一个挑战点就是如何快速的创建表从而避免我们要耗费数月的时间。我用过三个锦囊妙计：
+另一个挑战点就是如何快速的创建表从而避免我们要耗费数月的时间。我用了三个锦囊妙计：
 1. 禁用MySQL里面一切可能的一致性检测，减小innodb的page大小为4k（这些配置更改不适合生产环境）
 2. 并发创建表。因为之前[MySQL 8.0中的互斥量争用问题](https://bugs.mysql.com/bug.php?id=87827)已经得到修复，所以并发创建表表现良好。
 3. 在AWS ec2 i3.8 xlarge的实例上使用本地的NVMe卡
@@ -220,7 +220,7 @@ It took > 6 hours to do “count(*) from information_schema.tables”! Here is w
 
 1. MySQL 8.0 uses a new data dictionary (this is great as it avoids creating 1 billion frm files). Everything is stored in this file:     
 ----
-1. MySQL 8.0 使用了一个新的数据字典（这很妙，避免创建了10亿个frm文件）。所有的内容都存储在下面这个文件里：  
+1. MySQL 8.0 使用了一个新的数据字典（这很妙，避免创建10亿个frm文件）。所有的内容都存储在下面这个文件里：  
 
 ```
 # ls -lah /mysqldata/mysql/data/mysql.ibd
@@ -332,9 +332,9 @@ possible_keys: PRIMARY
 3. ZFS compression together with NVMe cards makes it reasonably cheap to do, for example, by using i3.4xlarge or i3.8xlarge instances on AWS.  
 
 -------
-1. 只是因为个人兴趣，我在MySQL 8.0上创建了10亿+张InnoDB表和索引，我成功了。它花费了我大约2周的时间。
+1. 只是因为个人兴趣，我在MySQL 8.0上创建了10亿张InnoDB表和索引，我成功了。它花费了我大约2周的时间。
 2. 大概率MySQL 8.0是MySQL里面第一个支持能够创建10亿张InnoDB表的版本。
-3. ZFS 的压缩再结合NVMe卡，让你付出更低的成本。例如，选择AWS的i3.4xlarge或者i3.8xlarge实例。
+3. ZFS 的压缩再结合NVMe卡，可以降低成本。例如，选择AWS的i3.4xlarge或者i3.8xlarge实例。
 
 ![MySQL 10亿！](https://www.percona.com/blog/wp-content/uploads/2018/10/one-billion-tables-mysql-367x250.jpg)
 
