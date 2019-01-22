@@ -39,12 +39,12 @@ Yes, it took 6 hours and 57 minutes to count them all!
 ## Why does anyone need one billion tables?  
 ## 谁会需要创建10亿+张表？  
 
-In my previous blog post, I created and tested MySQL 8.0 with 40 million tables (that was a real case study). The One Billion Tables project is not a real world scenario, however. I was challenged by Billion Tables Project (BTP) in PostgreSQL, and decided to repeat it with MySQL, creating 1 billion InnoDB tables.  
-在我之前的文章中，我创建和测试了[MySQL 8.0上创建4000w张表](https://www.percona.com/blog/2018/09/03/40-million-tables-in-mysql-8-0-with-zfs/)（这是一个真实的案例）。不过10亿张表不是真实的案例场景。因为我想挑战之前有人说[在PG上创建了10亿张表](https://www.pgcon.org/2013/schedule/attachments/283_Billion_Tables_Project-PgCon2013.pdf)
-的骚操作，于是决定在MySQL上也创建一把10亿个InnoDB表看看。
+In my previous blog post, I created and tested [MySQL 8.0 with 40 million tables](https://www.pgcon.org/2013/schedule/attachments/283_Billion_Tables_Project-PgCon2013.pdf)  (that was a real case study). The One Billion Tables project is not a real world scenario, however. I was challenged by [Billion Tables Project (BTP) in PostgreSQL](https://www.pgcon.org/2013/schedule/attachments/283_Billion_Tables_Project-PgCon2013.pdf), and decided to repeat it with MySQL, creating 1 billion InnoDB tables.  
+
+在我之前的文章中，我创建和测试了[MySQL 8.0上创建4000w张表](https://www.percona.com/blog/2018/09/03/40-million-tables-in-mysql-8-0-with-zfs/)（这是一个真实的案例）。不过10亿张表不是真实的案例场景，是因为我想挑战下[在PG上创建了10亿张表](https://www.pgcon.org/2013/schedule/attachments/283_Billion_Tables_Project-PgCon2013.pdf)的测试，所以准备在MySQL下创建下10亿张InnoDB表。
 
 As an aside: I think MySQL 8.0 is the first MySQL version where creating 1 billion InnoDB tables is even practically possible.
-注：我认为MySQL 8.0版本实际上才有创建出10亿张InnoDB表的可能。
+注：我认为MySQL8.0版本才是第一个具有创建10亿张InnoDB表可能性的MySQL版本。
 
 ## Challenges with one billion InnoDB tables
 ## 挑战10亿张InnoDB表
@@ -240,7 +240,7 @@ collation_connection: utf8_general_ci
 ```
 
 and the explain plan looks like this:  
-而且你用explain去看查询的信息：  
+而且通过explain看到它的执行计划如下：  
 
 ```
 mysql> explain select count(*) from information_schema.tables \G
@@ -332,7 +332,7 @@ possible_keys: PRIMARY
 3. ZFS compression together with NVMe cards makes it reasonably cheap to do, for example, by using i3.4xlarge or i3.8xlarge instances on AWS.  
 
 -------
-1. 只关乎快乐，我在MySQL 8.0上创建了10亿张InnoDB表和索引，我做到了。它花费了我大约2周的时间。
+1. 只是因为个人兴趣，我在MySQL 8.0上创建了10亿+张InnoDB表和索引，我成功了。它花费了我大约2周的时间。
 2. 大概率MySQL 8.0是MySQL里面第一个支持能够创建10亿张InnoDB表的版本。
 3. ZFS 的压缩再结合NVMe卡，让你付出更低的成本。例如，选择AWS的i3.4xlarge或者i3.8xlarge实例。
 
